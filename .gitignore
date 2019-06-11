@@ -18,3 +18,4 @@ bbruntime_dll/bbruntime_dll.vcxproj.filters
 *.exe
 *.dll
 *.pdb
+/_release/tmp
