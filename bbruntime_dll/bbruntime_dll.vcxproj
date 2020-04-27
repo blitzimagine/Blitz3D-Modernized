@@ -175,12 +175,11 @@
   <ItemGroup>
     <Library Include="..\bbruntime\Release\bbruntime.lib" />
     <Library Include="..\blitz3d\Release\blitz3d.lib" />
-    <Library Include="..\gxruntime\Release\gxruntime.lib" />
     <Library Include="..\lib\directx7\lib\d3dxof.lib" />
     <Library Include="..\lib\directx7\lib\dinput.lib" />
     <Library Include="..\lib\directx7\lib\dplayx.lib" />
     <Library Include="..\lib\fmodapi375win\api\lib\fmodvc.lib" />
-    <Library Include="..\lib\freeimage241\Lib_New\FreeImage.lib" />
+    <Library Include="..\lib\freeimage241\Source\FreeImageLib\Release\FreeImage.lib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\bbruntime\bbruntime.vcxproj">
