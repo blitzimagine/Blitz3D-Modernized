@@ -19,3 +19,4 @@ bbruntime_dll/bbruntime_dll.vcxproj.filters
 *.dll
 *.pdb
 /_release/tmp
+/_release/cfg/blitzide.prefs
