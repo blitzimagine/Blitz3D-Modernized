@@ -5,7 +5,7 @@
 #include "bbsys.h"
 #include "../gxruntime/gxscene.h"
 
-extern gxScene *gx_scene;
+extern gxScene* gx_scene;
 
 #endif
 

@@ -27,22 +27,22 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE DISCARDABLE
 BEGIN
-    "resource.h\0"
+"resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE DISCARDABLE
 BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
+"#include ""afxres.h""\r\n"
+"\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE DISCARDABLE
 BEGIN
-    "#include ""../bbruntime/multiplay_setup.rc""\r\n"
-    "\r\n"
-    "\0"
+"#include ""../bbruntime/multiplay_setup.rc""\r\n"
+"\r\n"
+"\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -53,9 +53,9 @@ END
 // Data
 //
 
-IDR_BBMODULE RCDATA DISCARDABLE 
+IDR_BBMODULE RCDATA DISCARDABLE
 BEGIN
-    0x0201, 0x0403
+0x0201, 0x0403
 END
 
 
