@@ -15,6 +15,7 @@ public:
 	virtual void setVolume(float volume) = 0;
 	virtual void setPan(float pan) = 0;
 	virtual void set3d(const float pos[3], const float vel[3]) = 0;
+	virtual void set3dOptions(float roll, float dopp, float dist) = 0;
 
 	virtual bool isPlaying() = 0;
 };

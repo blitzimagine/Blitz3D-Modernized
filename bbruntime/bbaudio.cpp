@@ -65,7 +65,7 @@ gxChannel* bbPlayMusic(BBStr* f) {
 }
 
 gxChannel* bbPlayCDTrack(int track, int mode) {
-	return gx_audio ? gx_audio->playCDTrack(track, mode) : 0;
+	return 0;//gx_audio ? gx_audio->playCDTrack(track, mode) : 0;
 }
 
 void bbStopChannel(gxChannel* channel) {

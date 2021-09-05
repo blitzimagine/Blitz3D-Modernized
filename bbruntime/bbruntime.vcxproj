@@ -50,8 +50,8 @@
     <OutDir>.\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\lib\directx7\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\lib\directx7\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\lib\soloud\include;..\lib\directx7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib\soloud\lib;..\lib\directx7\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -2,6 +2,15 @@
 #include "std.h"
 #include "gxaudio.h"
 
+#include <soloud_wav.h>
+#include <soloud_wavstream.h>
+#include <soloud_openmpt.h>
+#include <soloud_audiosource.h>
+
+float gxAudio::roll = 1.0f;
+float gxAudio::dopp = 1.0f;
+float gxAudio::dist = 1.0f;
+
 struct StaticChannel : public gxChannel {
 	virtual void play() = 0;
 };
@@ -13,35 +22,48 @@ struct SoundChannel : public gxChannel {
 		channel = n;
 	}
 	void stop() {
-		FSOUND_StopSound(channel);
+		gSoloud.stop(channel);
 	}
 	void setLooping(bool looping)
 	{
-		// Dummy Func
+		gSoloud.setLooping(channel, looping);
 	}
 	void setPaused(bool paused) {
-		FSOUND_SetPaused(channel, paused);
+		gSoloud.setPause(channel, paused);
 	}
 	void setPitch(int pitch) {
-		FSOUND_SetFrequency(channel, pitch);
+		gSoloud.setSamplerate(channel, pitch);
+		//FSOUND_SetFrequency(channel, pitch);
 	}
 	void setVolume(float volume) {
-		FSOUND_SetVolume(channel, (int)(volume * 255.0f));
+		gSoloud.setVolume(channel, volume);
+		//FSOUND_SetVolume(channel, (int)(volume * 255.0f));
 	}
 	void setPan(float pan) {
-		FSOUND_SetPan(channel, (int)((pan + 1) * 127.5f));
+		gSoloud.setPan(channel, pan);
+		//FSOUND_SetPan(channel, (int)((pan + 1) * 127.5f));
 	}
 	void set3d(const float pos[3], const float vel[3]) {
-		FSOUND_3D_SetAttributes(channel, (float*)pos, (float*)vel);
+		gSoloud.set3dSourceParameters(channel, pos[0], pos[1], pos[2], vel[0], vel[1], vel[2]);
+	}
+	void set3dOptions(float roll, float dopp, float distFactor)
+	{
+		gSoloud.set3dSourceAttenuation(channel, SoLoud::AudioSource::ATTENUATION_MODELS::EXPONENTIAL_DISTANCE, roll);
+		gSoloud.set3dSourceDopplerFactor(channel, dopp);
+
+		float minDist = 1.0f;
+		float maxDist = 1000000000.0f;
+		gSoloud.set3dSourceMinMaxDistance(channel, minDist * distFactor, maxDist * distFactor);
 	}
 	bool isPlaying() {
-		return FSOUND_IsPlaying(channel) ? true : false;
+		// TODO: This might be incorrect for checking if the sound is playing
+		return gSoloud.isValidVoiceHandle(channel) && !gSoloud.getPause(channel);
 	}
 private:
-	int channel;
+	unsigned int channel;
 };
 
-struct CDChannel : public gxChannel {
+/*struct CDChannel : public gxChannel {
 	void play(int track, int mode) {
 		stop();
 		int cd_mode = FSOUND_CD_PLAYONCE;
@@ -72,89 +94,102 @@ struct CDChannel : public gxChannel {
 	bool isPlaying() {
 		return true;
 	}
-};
+};*/
 
 struct StreamChannel : public StaticChannel {
-	StreamChannel(FSOUND_STREAM* s) :stream(s) {
-		channel = FSOUND_Stream_Play(FSOUND_FREE, stream);
+	StreamChannel(AUDIO_SOURCE* s) :stream(s) {
+		channel = gSoloud.play(*s);
 	}
 	~StreamChannel() {
-		FSOUND_Stream_Close(stream);
+		delete stream;
+		//FSOUND_Stream_Close(stream);
 	}
 	void play() {
 		stop();
-		channel = FSOUND_Stream_Play(FSOUND_FREE, stream);
+		channel = gSoloud.play(*stream);
 	}
 	void stop() {
-		FSOUND_Stream_Stop(stream);
+		// TODO: should this be gSoloud.stopAudioSource(*stream); instead?
+		gSoloud.stop(channel);
 		channel = -1;
 	}
 	void setLooping(bool looping)
 	{
-		FSOUND_Stream_SetMode(stream, looping ? FSOUND_LOOP_NORMAL : FSOUND_LOOP_OFF);
+		gSoloud.setLooping(channel, looping);
 	}
 	void setPaused(bool paused) {
-		FSOUND_SetPaused(channel, paused);
+		gSoloud.setPause(channel, paused);
 	}
 	void setPitch(int pitch) {
-		FSOUND_SetFrequency(channel, pitch);
+		gSoloud.setSamplerate(channel, pitch);
+		//FSOUND_SetFrequency(channel, pitch);
 	}
 	void setVolume(float volume) {
-		FSOUND_SetVolume(channel, (int)(volume * 255.0f));
+		gSoloud.setVolume(channel, volume);
+		//FSOUND_SetVolume(channel, (int)(volume * 255.0f));
 	}
 	void setPan(float pan) {
-		FSOUND_SetPan(channel, (int)((pan + 1) * 127.5f));
+		gSoloud.setPan(channel, pan);
+		//FSOUND_SetPan(channel, (int)((pan + 1) * 127.5f));
 	}
 	void set3d(const float pos[3], const float vel[3]) {
 	}
+	void set3dOptions(float roll, float dopp, float dist) {}
 	bool isPlaying() {
-		return FSOUND_IsPlaying(channel) ? true : false;
+		// TODO: This might be incorrect for checking if the sound is playing
+		return gSoloud.isValidVoiceHandle(channel) && !gSoloud.getPause(channel);
 	}
 private:
-	FSOUND_STREAM* stream;
+	AUDIO_SOURCE* stream;
 	int channel;
 };
 
 struct MusicChannel : public StaticChannel {
-	MusicChannel(FMUSIC_MODULE* m) :module(m) {
+	MusicChannel(AUDIO_SOURCE* m) :module(m) {
 		play();
 	}
 	~MusicChannel() {
-		FMUSIC_FreeSong(module);
+		delete module;
+		//FMUSIC_FreeSong(module);
 	}
 	void play() {
-		FMUSIC_PlaySong(module);
+		channel = gSoloud.play(*module);
 	}
 	void stop() {
-		FMUSIC_StopSong(module);
+		// TODO: should this be gSoloud.stopAudioSource(*module); instead?
+		gSoloud.stop(channel);
 	}
 	void setLooping(bool looping)
 	{
 		// Dummy Func (For Now)
 	}
 	void setPaused(bool paused) {
-		FMUSIC_SetPaused(module, paused);
+		gSoloud.setPause(channel, paused);
 	}
 	void setPitch(int pitch) {
 	}
 	void setVolume(float volume) {
-		FMUSIC_SetMasterVolume(module, (int)(volume * 255.0f));
+		gSoloud.setVolume(channel, volume);
+		//FMUSIC_SetMasterVolume(module, (int)(volume * 255.0f));
 	}
 	void setPan(float pan) {
 	}
 	void set3d(const float pos[3], const float vel[3]) {
 	}
+	void set3dOptions(float roll, float dopp, float dist) {}
 	bool isPlaying() {
-		return FMUSIC_IsFinished(module) ? false : true;
+		// TODO: This might be incorrect for checking if the sound is playing
+		return gSoloud.isValidVoiceHandle(channel) && !gSoloud.getPause(channel);
 	}
 private:
-	FMUSIC_MODULE* module;
+	AUDIO_SOURCE* module;
+	int channel;
 };
 
 static set<gxSound*> sound_set;
 static vector<gxChannel*> channels;
 static map<string, StaticChannel*> songs;
-static CDChannel* cdChannel;
+//static CDChannel* cdChannel;
 
 static int next_chan;
 static vector<SoundChannel*> soundChannels;
@@ -184,6 +219,9 @@ static gxChannel* allocSoundChannel(int n) {
 	}
 
 	chan->set(n);
+	// TODO: find a way to only call the following when the sound is 3d
+	//chan->set3dOptions(gxAudio::roll, gxAudio::dopp, gxAudio::dist);
+	//gSoloud.update3dAudio();
 	return chan;
 }
 
@@ -193,8 +231,8 @@ gxAudio::gxAudio(gxRuntime* r) :
 	soundChannels.resize(4096);
 	for (int k = 0; k < 4096; ++k) soundChannels[k] = 0;
 
-	cdChannel = d_new CDChannel();
-	channels.push_back(cdChannel);
+	//cdChannel = d_new CDChannel();
+	//channels.push_back(cdChannel);
 }
 
 gxAudio::~gxAudio() {
@@ -205,21 +243,19 @@ gxAudio::~gxAudio() {
 	soundChannels.clear();
 	songs.clear();
 
-	FSOUND_Close();
+	//FSOUND_Close();
 }
 
-gxChannel* gxAudio::play(FSOUND_SAMPLE* sample) {
+gxChannel* gxAudio::play(AUDIO_SOURCE* sample) {
 
-	int n = FSOUND_PlaySound(FSOUND_FREE, sample);
-	return n >= 0 ? allocSoundChannel(n) : 0;
+	SoLoud::handle n = gSoloud.play(*sample);
+	return allocSoundChannel(n);
 }
 
-gxChannel* gxAudio::play3d(FSOUND_SAMPLE* sample, const float pos[3], const float vel[3]) {
+gxChannel* gxAudio::play3d(AUDIO_SOURCE* sample, const float pos[3], const float vel[3]) {
 
-	int n = FSOUND_PlaySoundEx(FSOUND_FREE, sample, 0, true);
-	if (n < 0) return 0;
-	FSOUND_3D_SetAttributes(n, (float*)pos, (float*)vel);
-	FSOUND_SetPaused(n, false);
+	SoLoud::handle n = gSoloud.play3d(*sample, pos[0], pos[1], pos[2], vel[0], vel[1], vel[2]);
+
 	return allocSoundChannel(n);
 }
 
@@ -231,10 +267,12 @@ void gxAudio::resume() {
 
 gxSound* gxAudio::loadSound(const string& f, bool use3d) {
 
-	int flags = FSOUND_NORMAL | (use3d ? FSOUND_FORCEMONO : FSOUND_2D);
-
-	FSOUND_SAMPLE* sample = FSOUND_Sample_Load(FSOUND_FREE, f.c_str(), flags, 0, 0);
-	if (!sample) return 0;
+	SoLoud::Wav* sample = new SoLoud::Wav;
+	if (sample->load(f.c_str()) != SoLoud::SO_NO_ERROR)
+	{
+		delete sample;
+		return 0;
+	}
 
 	gxSound* sound = d_new gxSound(this, sample);
 	sound_set.insert(sound);
@@ -250,21 +288,32 @@ void gxAudio::freeSound(gxSound* s) {
 }
 
 void gxAudio::setPaused(bool paused) {
-	FSOUND_SetPaused(FSOUND_ALL, paused);
+	gSoloud.setPauseAll(paused);
 }
 
 void gxAudio::setVolume(float volume) {
 }
 
 void gxAudio::set3dOptions(float roll, float dopp, float dist) {
-	FSOUND_3D_SetRolloffFactor(roll);
-	FSOUND_3D_SetDopplerFactor(dopp);
-	FSOUND_3D_SetDistanceFactor(dist);
+	// save these for new channels
+	gxAudio::roll = roll;
+	gxAudio::dopp = dopp;
+	gxAudio::dist = dist;
+
+	// Update 3d options for all channels
+	for (auto channel : channels)
+	{
+		channel->set3dOptions(roll, dopp, dist);
+		//channel->setRolloffFactor(roll);
+		//channel->setDopplerFactor(dopp);
+		//channel->setDistanceFactor(dist);
+	}
+	gSoloud.update3dAudio();
 }
 
 void gxAudio::set3dListener(const float pos[3], const float vel[3], const float forward[3], const float up[3]) {
-	FSOUND_3D_Listener_SetAttributes((float*)pos, (float*)vel, forward[0], forward[1], forward[2], up[0], up[1], up[2]);
-	FSOUND_Update();
+	gSoloud.set3dListenerParameters(pos[0], pos[1], pos[2], forward[0], forward[1], forward[2], up[0], up[1], up[2], vel[0], vel[1], vel[2]);
+	gSoloud.update3dAudio();
 }
 
 gxChannel* gxAudio::playFile(const string& t, bool use_3d) {
@@ -284,16 +333,21 @@ gxChannel* gxAudio::playFile(const string& t, bool use_3d) {
 	   f.find( ".ogg" )!=string::npos ||
 	   f.find( ".wma" )!=string::npos ||
 	   f.find( ".asf" )!=string::npos )*/ {
-		FSOUND_STREAM* stream = FSOUND_Stream_Open(f.c_str(), use_3d, 0, 0);
-		//if( !stream ) return 0;
-		if (stream)
+		SoLoud::WavStream* stream = new SoLoud::WavStream;
+		if (stream->load(f.c_str()) == SoLoud::SO_NO_ERROR)
 		{
 			chan = d_new StreamChannel(stream);
 			chan->setLooping(true);
 		}
-		else {
-			FMUSIC_MODULE* module = FMUSIC_LoadSong(f.c_str());
-			if (!module) return 0;
+		else { // If we fail to load a normal stream, try an OpenMPT stream
+			delete stream;
+
+			SoLoud::Openmpt* module = new SoLoud::Openmpt;
+			if (module->load(f.c_str()) != SoLoud::SO_NO_ERROR)
+			{
+				delete module;
+				return 0;
+			}
 			chan = d_new MusicChannel(module);
 		}
 	}/*else{
@@ -306,7 +360,7 @@ gxChannel* gxAudio::playFile(const string& t, bool use_3d) {
 	return chan;
 }
 
-gxChannel* gxAudio::playCDTrack(int track, int mode) {
-	cdChannel->play(track, mode);
-	return cdChannel;
-}
+//gxChannel* gxAudio::playCDTrack(int track, int mode) {
+//	cdChannel->play(track, mode);
+//	return cdChannel;
+//}

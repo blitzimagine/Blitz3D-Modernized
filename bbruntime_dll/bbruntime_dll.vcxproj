@@ -52,8 +52,8 @@
     <IntDir>.\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <TargetName>runtime</TargetName>
-    <IncludePath>..\lib\directx7\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\lib\directx7\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\lib\soloud\include;..\lib\directx7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib\soloud\lib;..\lib\directx7\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -178,7 +178,7 @@
     <Library Include="..\lib\directx7\lib\d3dxof.lib" />
     <Library Include="..\lib\directx7\lib\dinput.lib" />
     <Library Include="..\lib\directx7\lib\dplayx.lib" />
-    <Library Include="..\lib\fmodapi375win\api\lib\fmodvc.lib" />
+    <Library Include="..\lib\soloud\lib\soloud_static_x86.lib" />
     <Library Include="..\lib\freeimage241\Source\FreeImageLib\Release\FreeImage.lib" />
   </ItemGroup>
   <ItemGroup>

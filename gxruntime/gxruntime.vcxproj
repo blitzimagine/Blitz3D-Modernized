@@ -45,8 +45,8 @@
     <OutDir>.\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\lib\directx7\include;..\lib\fmodapi375win\api\inc;..\lib\freeimage241\Source;$(IncludePath)</IncludePath>
-    <LibraryPath>..\lib\directx7\lib;..\lib\fmodapi375win\api\lib;..\lib\freeimage241\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\lib\directx7\include;..\lib\freeimage241\Source;..\lib\soloud\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib\directx7\lib;..\lib\freeimage241\Lib;..\lib\soloud\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>.\Debug\</OutDir>

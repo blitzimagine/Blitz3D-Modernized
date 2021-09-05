@@ -3,6 +3,8 @@
 #include "gxruntime.h"
 #include "zmouse.h"
 
+#include <soloud.h>
+
 //#define SPI_SETMOUSESPEED	113
 
 struct gxRuntime::GfxMode {
@@ -679,14 +681,20 @@ void gxRuntime::setPointerVisible(bool vis) {
 gxAudio* gxRuntime::openAudio(int flags) {
 	if (audio) return 0;
 
-	int f_flags =
+	/*int f_flags =
 		FSOUND_INIT_GLOBALFOCUS |
 		FSOUND_INIT_USEDEFAULTMIDISYNTH;
 
 	FSOUND_SetHWND(hwnd);
 	if (!FSOUND_Init(44100, 1024, f_flags)) {
 		return 0;
-	}
+	}*/
+
+	int soloud_flags =
+		SoLoud::Soloud::FLAGS::LEFT_HANDED_3D |
+		SoLoud::Soloud::FLAGS::CLIP_ROUNDOFF;
+
+	gSoloud.init(soloud_flags);
 
 	audio = d_new gxAudio(this);
 	return audio;
