@@ -691,8 +691,7 @@ gxAudio* gxRuntime::openAudio(int flags) {
 	}*/
 
 	int soloud_flags =
-		SoLoud::Soloud::FLAGS::LEFT_HANDED_3D |
-		SoLoud::Soloud::FLAGS::CLIP_ROUNDOFF;
+		SoLoud::Soloud::FLAGS::LEFT_HANDED_3D;
 
 	gSoloud.init(soloud_flags, SoLoud::Soloud::AUTO, SoLoud::Soloud::AUTO, 2048);
 
