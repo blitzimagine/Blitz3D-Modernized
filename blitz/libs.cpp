@@ -1,3 +1,5 @@
+// Use the BlitzPath environment variable?
+//#define USE_BLITZPATH
 
 #include "libs.h"
 
@@ -251,6 +253,27 @@ static const char* linkUserLibs() {
 	return err;
 }
 
+#ifndef USE_BLITZPATH
+std::string GetExeFileName()
+{
+	char buffer[MAX_PATH];
+	GetModuleFileName(NULL, buffer, MAX_PATH);
+	return std::string(buffer);
+}
+
+std::string GetExePath()
+{
+	std::string f = GetExeFileName();
+	return f.substr(0, f.find_last_of("\\/"));
+}
+
+std::string GetExeParentDirPath()
+{
+	std::string f = GetExePath();
+	return f.substr(0, f.find_last_of("\\/"));
+}
+#endif
+
 const char* openLibs() {
 
 	//char *p=getenv( "blitzpath" );
@@ -262,7 +285,11 @@ const char* openLibs() {
 
 
 	if (err != 0) return "Can't find blitzpath environment variable";
+#ifdef USE_BLITZPATH
 	home = string(p);
+#else
+	home = GetExeParentDirPath();
+#endif
 
 	linkerHMOD = LoadLibrary((home + "/bin/linker.dll").c_str());
 	if (!linkerHMOD) return "Unable to open linker.dll";
