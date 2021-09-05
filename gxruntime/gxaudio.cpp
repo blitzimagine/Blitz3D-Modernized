@@ -161,7 +161,8 @@ struct MusicChannel : public StaticChannel {
 	}
 	void setLooping(bool looping)
 	{
-		gSoloud.setLooping(channel, looping);
+		// Soloud always loops OpenMPT modules
+		//gSoloud.setLooping(channel, looping);
 	}
 	void setPaused(bool paused) {
 		gSoloud.setPause(channel, paused);
@@ -349,7 +350,9 @@ gxChannel* gxAudio::playFile(const string& t, bool use_3d) {
 				return 0;
 			}
 			chan = d_new MusicChannel(module);
-			chan->setLooping(true);
+
+			// Soloud always loops OpenMPT modules
+			//chan->setLooping(true);
 		}
 	}/*else{
 		FMUSIC_MODULE *module=FMUSIC_LoadSong( f.c_str() );

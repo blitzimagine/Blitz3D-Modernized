@@ -1,3 +1,5 @@
+.vs
+
 *.sbl
 *.plg
 *.aps
@@ -20,3 +22,6 @@ bbruntime_dll/bbruntime_dll.vcxproj.filters
 *.pdb
 /_release/tmp
 /_release/cfg/blitzide.prefs
+/_release/userlibs
+!/_release/userlibs/UserLibs.txt
+!/lib/soloud/bin/*.dll
