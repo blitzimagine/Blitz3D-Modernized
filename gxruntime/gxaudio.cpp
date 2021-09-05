@@ -326,39 +326,34 @@ gxChannel* gxAudio::playFile(const string& t, bool use_3d) {
 		chan->play();
 		return chan;
 	}
-	else /*if(
+	else if(
 	   f.find( ".raw" )!=string::npos ||
 	   f.find( ".wav" )!=string::npos ||
 	   f.find( ".mp2" )!=string::npos ||
 	   f.find( ".mp3" )!=string::npos ||
 	   f.find( ".ogg" )!=string::npos ||
 	   f.find( ".wma" )!=string::npos ||
-	   f.find( ".asf" )!=string::npos )*/ {
+	   f.find( ".asf" )!=string::npos ) {
 		SoLoud::WavStream* stream = new SoLoud::WavStream;
-		if (stream->load(f.c_str()) == SoLoud::SO_NO_ERROR)
+		if (stream->load(f.c_str()) != SoLoud::SO_NO_ERROR)
 		{
-			chan = d_new StreamChannel(stream);
-			chan->setLooping(true);
-		}
-		else { // If we fail to load a normal stream, try an OpenMPT stream
 			delete stream;
-
-			SoLoud::Openmpt* module = new SoLoud::Openmpt;
-			if (module->load(f.c_str()) != SoLoud::SO_NO_ERROR)
-			{
-				delete module;
-				return 0;
-			}
-			chan = d_new MusicChannel(module);
-
-			// Soloud always loops OpenMPT modules
-			//chan->setLooping(true);
+			return 0;
 		}
-	}/*else{
-		FMUSIC_MODULE *module=FMUSIC_LoadSong( f.c_str() );
-		if( !module ) return 0;
-		chan=d_new MusicChannel( module );
-	}*/
+		chan = d_new StreamChannel(stream);
+		chan->setLooping(true);
+	}else{
+		SoLoud::Openmpt* module = new SoLoud::Openmpt;
+		if (module->load(f.c_str()) != SoLoud::SO_NO_ERROR)
+		{
+			delete module;
+			return 0;
+		}
+		chan = d_new MusicChannel(module);
+
+		// Soloud always loops OpenMPT modules
+		//chan->setLooping(true);
+	}
 	channels.push_back(chan);
 	songs[f] = chan;
 	return chan;
