@@ -36,7 +36,7 @@ struct SoundChannel : public gxChannel {
         //FSOUND_SetFrequency(channel, pitch);
     }
     void setVolume(float volume) {
-        gSoloud.setVolume(channel, volume);
+        gSoloud.setVolume(channel, volume);// * 1.92f);
         //FSOUND_SetVolume(channel, (int)(volume * 255.0f));
     }
     void setPan(float pan) {
@@ -125,7 +125,7 @@ struct StreamChannel : public StaticChannel {
         //FSOUND_SetFrequency(channel, pitch);
     }
     void setVolume(float volume) {
-        gSoloud.setVolume(channel, volume);
+        gSoloud.setVolume(channel, volume);// * 1.92f);
         //FSOUND_SetVolume(channel, (int)(volume * 255.0f));
     }
     void setPan(float pan) {
@@ -170,7 +170,7 @@ struct MusicChannel : public StaticChannel {
     void setPitch(int pitch) {
     }
     void setVolume(float volume) {
-        gSoloud.setVolume(channel, volume);
+        gSoloud.setVolume(channel, volume * 2.5f);//1.72f);
         //FMUSIC_SetMasterVolume(module, (int)(volume * 255.0f));
     }
     void setPan(float pan) {
@@ -220,6 +220,9 @@ static gxChannel* allocSoundChannel(int n) {
     }
 
     chan->set(n);
+
+    chan->setVolume(1.00f);
+
     // TODO: find a way to only call the following when the sound is 3d
     //chan->set3dOptions(gxAudio::roll, gxAudio::dopp, gxAudio::dist);
     //gSoloud.update3dAudio();
@@ -342,6 +345,7 @@ gxChannel* gxAudio::playFile(const string& t, bool use_3d) {
         }
         chan = d_new StreamChannel(stream);
         chan->setLooping(true);
+        chan->setVolume(1.00f);
     }
     else {
         SoLoud::Openmpt* module = new SoLoud::Openmpt;
@@ -351,6 +355,7 @@ gxChannel* gxAudio::playFile(const string& t, bool use_3d) {
             return 0;
         }
         chan = d_new MusicChannel(module);
+        chan->setVolume(1.00f);
 
         // Soloud always loops OpenMPT modules
         //chan->setLooping(true);
