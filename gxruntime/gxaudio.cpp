@@ -99,6 +99,8 @@ private:
 struct StreamChannel : public StaticChannel {
     StreamChannel(AUDIO_SOURCE* s) :stream(s) {
         channel = gSoloud.play(*s);
+        gSoloud.setProtectVoice(channel, true);
+        //gSoloud.setInaudibleBehavior(channel, true, false);
     }
     ~StreamChannel() {
         delete stream;
@@ -107,8 +109,11 @@ struct StreamChannel : public StaticChannel {
     void play() {
         stop();
         channel = gSoloud.play(*stream);
+        gSoloud.setProtectVoice(channel, true);
+        //gSoloud.setInaudibleBehavior(channel, true, false);
     }
     void stop() {
+        gSoloud.setProtectVoice(channel, false);
         // TODO: should this be gSoloud.stopAudioSource(*stream); instead?
         gSoloud.stop(channel);
         channel = -1;
@@ -154,8 +159,13 @@ struct MusicChannel : public StaticChannel {
     }
     void play() {
         channel = gSoloud.play(*module);
+
+        gSoloud.setProtectVoice(channel, true);
+        //gSoloud.setInaudibleBehavior(channel, true, false);
     }
     void stop() {
+        gSoloud.setProtectVoice(channel, false);
+
         // TODO: should this be gSoloud.stopAudioSource(*module); instead?
         gSoloud.stop(channel);
     }
