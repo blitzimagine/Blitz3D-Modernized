@@ -130,7 +130,7 @@ struct StreamChannel : public StaticChannel {
         //FSOUND_SetFrequency(channel, pitch);
     }
     void setVolume(float volume) {
-        gSoloud.setVolume(channel, volume * 2.5f);// * 1.92f);
+        gSoloud.setVolume(channel, volume);// * 1.92f);
         //FSOUND_SetVolume(channel, (int)(volume * 255.0f));
     }
     void setPan(float pan) {
