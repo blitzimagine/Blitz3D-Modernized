@@ -117,8 +117,6 @@ void gxRuntime::closeRuntime(gxRuntime* r) {
 //////////////////////////
 // RUNTIME CONSTRUCTION //
 //////////////////////////
-typedef int(_stdcall* SetAppCompatDataFunc)(int x, int y);
-
 gxRuntime::gxRuntime(HINSTANCE hi, const string& cl, HWND hw) :
 	hinst(hi), cmd_line(cl), hwnd(hw), curr_driver(0), enum_all(false),
 	pointer_visible(true), audio(0), input(0), graphics(0), fileSystem(0), use_di(false) {
@@ -133,13 +131,6 @@ gxRuntime::gxRuntime(HINSTANCE hi, const string& cl, HWND hw) :
 	memset(&osinfo, 0, sizeof(osinfo));
 	osinfo.dwOSVersionInfoSize = sizeof(osinfo);
 	GetVersionEx(&osinfo);
-
-	HMODULE ddraw = LoadLibraryA("ddraw.dll");
-	if (ddraw) {
-		SetAppCompatDataFunc SetAppCompatData = (SetAppCompatDataFunc)GetProcAddress(ddraw, "SetAppCompatData");
-		if (SetAppCompatData) SetAppCompatData(12, 0);
-		FreeLibrary(ddraw);
-	}
 }
 
 gxRuntime::~gxRuntime() {
