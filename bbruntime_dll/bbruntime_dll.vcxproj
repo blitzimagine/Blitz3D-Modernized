@@ -53,7 +53,7 @@
     <LinkIncremental>false</LinkIncremental>
     <TargetName>runtime</TargetName>
     <IncludePath>..\lib\soloud\include;..\lib\directx7\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\lib\soloud\lib;..\lib\directx7\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\lib\libopenmpt\build\lib\x86;..\lib\soloud\build\lib\x86;..\lib\directx7\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -155,7 +155,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>..\_release\bin\runtime.dll</OutputFile>
       <ImportLibrary>.\Release\runtime.lib</ImportLibrary>
-      <AdditionalDependencies>wsock32.lib;amstrmid.lib;winmm.lib;dxguid.lib;ddraw.lib;dsound.lib;dinput8.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;amstrmid.lib;winmm.lib;dxguid.lib;ddraw.lib;dsound.lib;dinput8.lib;odbc32.lib;odbccp32.lib;soloud.lib;libopenmpt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>no</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -178,7 +178,6 @@
     <Library Include="..\lib\directx7\lib\d3dxof.lib" />
     <Library Include="..\lib\directx7\lib\dinput.lib" />
     <Library Include="..\lib\directx7\lib\dplayx.lib" />
-    <Library Include="..\lib\soloud\lib\soloud_static_x86.lib" />
     <Library Include="..\lib\freeimage241\Source\FreeImageLib\Release\FreeImage.lib" />
   </ItemGroup>
   <ItemGroup>
