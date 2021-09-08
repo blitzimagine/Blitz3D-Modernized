@@ -24,4 +24,3 @@ bbruntime_dll/bbruntime_dll.vcxproj.filters
 /_release/cfg/blitzide.prefs
 /_release/userlibs
 !/_release/userlibs/UserLibs.txt
-!/lib/soloud/bin/*.dll
