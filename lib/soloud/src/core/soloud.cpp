@@ -36,6 +36,7 @@ freely, subject to the following restrictions:
 #ifdef _M_IX86
 #include <emmintrin.h>
 #endif
+#include <algorithm>
 #endif
 
 //#define FLOATING_POINT_DEBUG
@@ -1990,8 +1991,8 @@ namespace SoLoud
 
 		// If we get this far, there's nothing to it: we'll have to sort the voices to find the most audible.
 
-		// Iterative partial quicksort:
-		int left = 0, stack[24], pos = 0, right;
+		// Iterative partial quicksort: (commented out by Aryan since it is not needed)
+		/*int left = 0, stack[24], pos = 0, right;
 		int len = candidates - mustlive;
 		unsigned int *data = mActiveVoice + mustlive;
 		int k = mActiveVoiceCount;
@@ -2025,7 +2026,20 @@ namespace SoLoud
 			if (left >= k) break;
 			left = len;                  
 			len = stack[--pos];          
-		}	
+		}	*/
+
+		auto comp = [this](const unsigned int& a, const unsigned int& b)
+			{
+				// Test a>b
+				if ((mVoice[a]->mFlags & AudioSourceInstance::PROTECTED) && !(mVoice[b]->mFlags & AudioSourceInstance::PROTECTED))
+					return true;
+				if ((mVoice[b]->mFlags & AudioSourceInstance::PROTECTED) && !(mVoice[a]->mFlags & AudioSourceInstance::PROTECTED))
+					return false;
+				return mVoice[a]->mOverallVolume > mVoice[b]->mOverallVolume;
+			};
+
+		std::stable_sort(&mActiveVoice[0 + mustlive], &mActiveVoice[candidates], comp);
+
 		// TODO: should the rest of the voices be flagged INAUDIBLE?
 		mapResampleBuffers_internal();
 	}
