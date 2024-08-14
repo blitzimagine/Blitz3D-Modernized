@@ -110,6 +110,7 @@ struct StreamChannel : public StaticChannel {
         stop();
         channel = gSoloud.play(*stream);
         gSoloud.setProtectVoice(channel, true);
+        gSoloud.setLooping(channel, true);
         //gSoloud.setInaudibleBehavior(channel, true, false);
     }
     void stop() {
