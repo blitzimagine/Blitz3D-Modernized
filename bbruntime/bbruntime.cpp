@@ -90,7 +90,7 @@ void  bbDebugLog(BBStr* t) {
 
 void  _bbDebugStmt(int pos, const char* file) {
 	gx_runtime->debugStmt(pos, file);
-	if (!gx_runtime->idle()) RTEX(0);
+	//if (!gx_runtime->idle()) RTEX(0);
 }
 
 void  _bbDebugEnter(void* frame, void* env, const char* func) {
